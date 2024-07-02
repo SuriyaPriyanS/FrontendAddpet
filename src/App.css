@@ -1,0 +1,190 @@
+/* Dashboard.css */
+
+/* Custom styles for the Dashboard component */
+
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #f8f9fa;
+  }
+  
+  .logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .logo-container img {
+    border-radius: 50%;
+    width: 100px;
+  }
+  
+  .dashboard-header {
+    background-color: #ffc107;
+    padding: 20px 0;
+  }
+  
+  .dashboard-header p {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0;
+    color: #343a40;
+  }
+  
+  .dashboard-welcome {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #343a40;
+  }
+  
+  .logout-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .logout-button:hover {
+    background-color: #c82333;
+  }
+  
+  .navbar-container {
+    background-color: #d52b5c;
+    min-height: 80vh;
+    padding: 20px;
+    color: white;
+  }
+  
+  .navbar-container ul {
+    padding: 0;
+  }
+  
+  .navbar-container li {
+    list-style: none;
+    margin-bottom: 10px;
+  }
+  
+  .navbar-container a {
+    color: #ffc107;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  
+  .navbar-container a:hover {
+    color: #dc3545;
+  }
+  
+  .dropdown-menu {
+    background-color: #ffffff;
+    border-radius: 5px;
+    padding: 10px;
+  }
+  
+  .dropdown-toggle::after {
+    display: none;
+  }
+  
+  .dropdown {
+    position: relative;
+  }
+  
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 1rem;
+    background-color: white;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    width: 12rem;
+  }
+  
+  .dropdown:hover .dropdown-menu {
+    display: block;
+  }
+  
+  @media (min-width: 992px) {
+    .navbar-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .dropdown {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 991px) {
+    .navbar-container {
+      display: none;
+    }
+  }
+  /* AdaptationPage.css */
+.container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .form-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease; /* Example transition for background color */
+  }
+  
+  .form-button:hover {
+    background-color: lightblue; /* Example color change on hover */
+  }
+  
+ 
+  
+  .mt-2 {
+    margin-top: 2rem;
+  }
+  .icon-background {
+    display: inline-block;
+    background-color: #f0f0f0; /* Choose your background color */
+    padding: 5px; /* Adjust padding as needed */
+    border-radius: 50%; /* Optional: Makes the background circular */
+}
+.back-icon {
+  font-size: 3rem;
+  color: #007bff; /* Example color */
+  animation: bounce 1s infinite; /* Example animation */
+}
+
+.back-text {
+  margin-top: 5px;
+  font-size: 1rem;
+  color: #007bff; /* Example color */
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+  }
+  40% {
+      transform: translateY(-10px);
+  }
+  60% {
+      transform: translateY(-5px);
+  }
+}

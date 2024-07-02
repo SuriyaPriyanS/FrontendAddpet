@@ -1,0 +1,27 @@
+/* AdaptationPage.css */
+.container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .form-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease; /* Example transition for background color */
+  }
+  
+  .form-button:hover {
+    background-color: lightblue; /* Example color change on hover */
+  }
+  
+ 
+  
+  .mt-2 {
+    margin-top: 2rem;
+  }
+  
