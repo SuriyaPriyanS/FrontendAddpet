@@ -10,7 +10,6 @@ const Header = ({ children }) => {
   const dispatch = useDispatch();
   const user = useSelector(state => state.user.currentUser);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
-  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const auth = getAuth();
 
@@ -35,7 +34,7 @@ const Header = ({ children }) => {
     <nav className={`navbar navbar-expand-lg navbar-light ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}>
       <div className="container">
         <Link to="/" className="navbar-brand">
-          <img src="" alt="Logo" className="w-8 h-8 rounded-full mr-2" />
+          <img src="path/to/logo.png" alt="FourPaws Logo" className="w-8 h-8 rounded-full mr-2" />
           <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">FourPaws</span>
         </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +43,7 @@ const Header = ({ children }) => {
         <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link to="/login" className="nav-link">Home</Link>
+              <Link to="/" className="nav-link">Home</Link>
             </li>
             <li className="nav-item">
               <Link to="/pet" className="nav-link">Pet</Link>
