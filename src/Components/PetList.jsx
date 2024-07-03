@@ -18,7 +18,7 @@ const PetList = () => {
         const fetchPets = async () => {
             try {
                 const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
-                const response = await axios.get(`https://backend-10-840q.onrender.com/key=${apiKey}`);
+                const response = await axios.get(`http://localhost:5000/api/petkey=${apiKey}`);
 
                 if (Array.isArray(response.data.data)) {
                     setPets(response.data.data);
@@ -52,7 +52,7 @@ const PetList = () => {
 
             // Example of edit logic (you need to implement your own endpoint and logic)
             const response = await axios.put(
-                `https://backend-10-840q.onrender.com/${petId}`,
+                ``,
                 { /* Updated pet data */ },
                 {
                     headers: {

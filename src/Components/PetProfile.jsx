@@ -19,7 +19,7 @@ const PetUpdateForm = ({ petId }) => {
     useEffect(() => {
         const fetchPetDetails = async () => {
             try {
-                const response = await axios.get(`https://backend-10-840q.onrender.com/${petId}`);
+                const response = await axios.get(`http://localhost:5000/api/pet/667527bba064cdaa1940caa2${petId}`);
                 const petData = response.data.data;
 
                 setFormData({

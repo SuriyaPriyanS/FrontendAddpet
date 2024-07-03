@@ -29,7 +29,7 @@ const RegisterForm = () => {
         try {
             setLoading(true);
             setErrorMessage(null);
-            const response = await axios.post('https://backend-10-840q.onrender.com/', formData, {
+            const response = await axios.post('http://localhost:5000/api/register', formData, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
