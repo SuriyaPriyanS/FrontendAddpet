@@ -19,7 +19,7 @@ const OAuth = () => {
 
         try {
             const result = await signInWithPopup(auth, provider);
-            const response = await axios.post('http://localhost:5000/api/google', {
+            const response = await axios.post('https://backend-10-840q.onrender.com/', {
                 name: result.user.displayName,
                 email: result.user.email,
                 profilePict: result.user.photoURL,

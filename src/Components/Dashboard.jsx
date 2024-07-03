@@ -14,7 +14,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         // Fetch user data and check admin status
-        axios.get('http://localhost:5000/api/user/profile', {
+        axios.get('https://backend-10-840q.onrender.com/', {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('authToken')}`,
             },
