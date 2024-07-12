@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '.././../api'; // Import the axios instance from api.js
 
 const initialState = {
   pets: [],
@@ -14,7 +14,7 @@ export const fetchPets = createAsyncThunk(
   'pets/fetchPets',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('http://localhost:5000/api/api/pet', {
+      const response = await api.get('/api/pet', {
         headers: {
           'Authorization': `Bearer ${apiKey}`
         }
@@ -28,9 +28,9 @@ export const fetchPets = createAsyncThunk(
 
 export const fetchPet = createAsyncThunk(
   'pets/fetchPet',
-  async (petId, { rejectWithValue }) => {
+  async (searchName, { rejectWithValue }) => { // Changed petId to searchName as it seems more appropriate
     try {
-      const response = await axios.get(`http://localhost:5000/api/api/pet?Name=${searchName}&key=${apiKey}}`, {
+      const response = await api.get(`/api/pet?Name=${searchName}&key=${apiKey}`, {
         headers: {
           'Authorization': `Bearer ${apiKey}`
         }
@@ -46,7 +46,7 @@ export const deletePet = createAsyncThunk(
   'pets/deletePet',
   async (petId, { rejectWithValue }) => {
     try {
-      await axios.delete(`http://localhost:5000/api/api/pet?key=${apiKey}}`, {
+      await api.delete(`/api/pet/${petId}`, {
         headers: {
           'Authorization': `Bearer ${apiKey}`
         }

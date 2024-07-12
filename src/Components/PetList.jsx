@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { BsFillEyeFill } from 'react-icons/bs';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
@@ -17,8 +17,7 @@ const PetList = () => {
     useEffect(() => {
         const fetchPets = async () => {
             try {
-                const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
-                const response = await axios.get(`http://localhost:5000/api/petkey=${apiKey}`);
+                const response = await axios.get(`https://backend-11-9tn7.onrender.com/api/api/pet`);
 
                 if (Array.isArray(response.data.data)) {
                     setPets(response.data.data);
@@ -28,7 +27,6 @@ const PetList = () => {
                     setLoading(false);
                 }
             } catch (error) {
-                console.error('Error fetching pets:', error);
                 setError('Error fetching pets. Please try again later.');
                 setLoading(false);
             }
@@ -38,7 +36,6 @@ const PetList = () => {
     }, []);
 
     const handleViewDetails = (petId) => {
-        // Navigate to pet details page with petId
         navigate(`/profile`);
     };
 
@@ -50,9 +47,8 @@ const PetList = () => {
                 return;
             }
 
-            // Example of edit logic (you need to implement your own endpoint and logic)
             const response = await axios.put(
-                ``,
+                `https://backend-11-9tn7.onrender.com/api/pet/${petId}`,
                 { /* Updated pet data */ },
                 {
                     headers: {
@@ -61,26 +57,46 @@ const PetList = () => {
                 }
             );
 
-            // Handle successful edit response
             toast.success('Pet details updated successfully.');
-            // Optionally, update local state or fetch pets again
         } catch (error) {
             console.error('Error editing pet:', error);
             toast.error('Failed to edit pet. Please try again.');
         }
     };
 
+    const handleAdoption = async (petId) => {
+        try {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                toast.error('User is not authenticated.');
+                return;
+            }
+
+            const response = await axios.post(
+                `https://backend-11-9tn7.onrender.com/api/api/pet`, // Assuming your API endpoint for adoption
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                }
+            );
+
+            // Update the pet status locally
+            setPets(pets.map(pet => pet._id === petId ? { ...pet, status: 'adopted' } : pet));
+
+            // Show success message
+            toast.success('Pet adopted successfully.');
+        } catch (error) {
+            console.error('Error adopting pet:', error);
+            toast.error('Failed to adopt pet. Please try again.');
+        }
+    };
+
     const handleExportJSON = () => {
-        // Prepare data for export (e.g., convert pets array to JSON string)
         const jsonContent = JSON.stringify(pets, null, 2);
-
-        // Create a Blob object from the JSON content
         const blob = new Blob([jsonContent], { type: 'application/json' });
-
-        // Create an object URL for the Blob
         const url = URL.createObjectURL(blob);
-
-        // Create a link element and click it to trigger download
         const a = document.createElement('a');
         a.href = url;
         a.download = 'pets.json';
@@ -119,6 +135,13 @@ const PetList = () => {
     useEffect(() => {
         console.log('Filtered Pets:', filteredPets);
     }, [filter, pets, searchTerm]);
+
+    useEffect(() => {
+        // Example scenario where adoption is triggered automatically
+        if (filteredPets.length > 0) {
+            handleAdoption(filteredPets[0]._id); // Automatically adopt the first filtered pet
+        }
+    }, [filteredPets]);
 
     if (loading) {
         return <div className="container text-center">Loading...</div>;
@@ -166,7 +189,10 @@ const PetList = () => {
                                     <button onClick={() => handleViewDetails(pet._id)} className="btn btn-primary">
                                         <BsFillEyeFill className="mr-1" /> View Details
                                     </button>
-                                   
+                                    
+                                    <button onClick={() => handleAdoption(pet._id)} className="btn btn-success ml-2 ms-2">
+                                        Adopt
+                                    </button>
                                 </div>
                             </div>
                         </div>

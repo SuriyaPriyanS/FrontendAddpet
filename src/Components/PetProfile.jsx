@@ -19,7 +19,7 @@ const PetUpdateForm = ({ petId }) => {
     useEffect(() => {
         const fetchPetDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/pet/667527bba064cdaa1940caa2${petId}`);
+                const response = await axios.get(`https://backend-11-9tn7.onrender.com/api/api/pet`);
                 const petData = response.data.data;
 
                 setFormData({
@@ -48,7 +48,7 @@ const PetUpdateForm = ({ petId }) => {
         event.preventDefault();
 
         try {
-            const response = await axios.put(`http://localhost:5000/api/api/pet/6675807d6e29ed10a555b9e0`, formData);
+            const response = await axios.put(`https://backend-11-9tn7.onrender.com/api/api/pet/6675807d6e29ed10a555b9e0`, formData);
             console.log('Pet updated successfully:', response.data);
             // Handle success, e.g., show success message or redirect
             navigate('/apply'); // Navigate back to the pet list
