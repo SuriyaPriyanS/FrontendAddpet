@@ -20,6 +20,7 @@ const PetList = () => {
                 const response = await axios.get('https://suriyaadption.onrender.com/api/getpetall');
 
                 if (Array.isArray(response.data.data)) {
+                   // console.log(response.data.data[0]);
                     setPets(response.data.data);
                     setLoading(false);
                 } else {
@@ -43,7 +44,7 @@ const PetList = () => {
                 return;
             }
 
-            await axios.put(
+            await axios.get(
                 `https://suriyaadption.onrender.com/api/pet/${petId}`,
                 { /* Updated pet data */ },
                 {
@@ -175,6 +176,7 @@ const PetList = () => {
                                     <h3 className="card-title">{pet.name}</h3>
                                     <p className="card-text"><strong>Breed:</strong> {pet.breed}</p>
                                     <p className="card-text"><strong>Age:</strong> {pet.age}</p>
+                                    {/* viewdetails */}
                                     <button onClick={() => handleViewDetails(pet._id)} className="btn btn-primary">
                                         <BsFillEyeFill className="mr-1" /> View Details
                                     </button>

@@ -1,62 +1,62 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchPet, initiateAdoption } from '../redux/Slice/petSlice';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const PetProfile = () => {
     const { petId } = useParams();
-    const dispatch = useDispatch();
-    const { pet, loading, error } = useSelector((state) => state.pets);
+    const [pet, setPet] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        dispatch(fetchPet(petId));
-    }, [dispatch, petId]);
+        const fetchPet = async () => {
+            try {
+                const response = await axios.get(`https://suriyaadption.onrender.com/api/pet/${petId}`);
 
-    useEffect(() => {
-        if (error) {
-            toast.error(error);
-        }
-    }, [error]);
+                if (response.data) {
+                    setPet(response.data.data);
+                    setLoading(false);
+                    console.log(response.data);
+                  // console.log(pet.name);
+                } else {
+                    setError('Pet not found.');
+                    setLoading(false);
+                }
+            } catch (error) {
+                setError('Error fetching pet details. Please try again later.');
+                setLoading(false);
+            }
+        };
 
-    const handleAdopt = () => {
-        dispatch(initiateAdoption(petId))
-            .unwrap()
-            .then(() => {
-                toast.success('Adoption initiated successfully!');
-            })
-            .catch((err) => {
-                toast.error(err.message || 'Adoption failed. Please try again.');
-            });
-    };
+        fetchPet();
+    }, [petId]);
+
+    
 
     if (loading) {
-        return <div className="container text-center">Loading...</div>;
+        return <div>Loading...</div>;
     }
 
     if (error) {
-        return <div className="container text-center">Error: {error}</div>;
+        return <div>Error: {error}</div>;
     }
 
+    if (!pet) {
+        return <div>Pet not found.</div>;
+    }
+ 
     return (
         <div className="container">
-            {pet && (
-                <div className="card">
-                    <img src={pet.photo} className="card-img-top" alt={pet.name} />
-                    <div className="card-body">
-                        <h2 className="card-title">{pet.name}</h2>
-                        <p className="card-text"><strong>Breed:</strong> {pet.breed}</p>
-                        <p className="card-text"><strong>Age:</strong> {pet.age}</p>
-                        <p className="card-text"><strong>Description:</strong> {pet.description}</p>
-                        <p className="card-text"><strong>Location:</strong> {pet.location}</p>
-                        <button className="btn btn-primary" onClick={handleAdopt}>
-                            Adopt
-                        </button>
-                    </div>
-                </div>
-            )}
-            <ToastContainer />
+            <h2>Pet Profile</h2>
+            <div>
+                <h3>{pet.name}</h3>
+                <img src={pet.photo} className="card-img-top pet-image" alt={pet.name} />
+                <p><strong>Breed:</strong> {pet.breed}</p>
+                <p><strong>Age:</strong> {pet.age}</p>
+                <p><strong>Description:</strong> {pet.description}</p>
+                 
+                {/* Other details */}
+            </div>
         </div>
     );
 };
