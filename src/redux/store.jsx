@@ -11,6 +11,7 @@ const rootReducer = combineReducers({
     pets: petReducer,
     PaymentSlice: PaymentReducer,
     
+    
 });
 
 const persistConfig = {

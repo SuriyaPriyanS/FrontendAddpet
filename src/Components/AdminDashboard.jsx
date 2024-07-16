@@ -1,65 +1,31 @@
 // AdminDashboard.jsx
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchPets } from '../redux/Slice/petSlice'; // Adjust the path as necessary
 
 const AdminDashboard = () => {
-  const [pets, setPets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const dispatch = useDispatch();
+    const { pets } = useSelector((state) => state.pet); // Adjust the slice name and property name as per your Redux setup
 
-  useEffect(() => {
-    const fetchPets = async () => {
-      try {
-        const response = await axios.get('https://suriyaadption.onrender.com/api/getpetall');
-        setPets(response.data);
-        setLoading(false);
-      } catch (error) {
-        setError('Error fetching pets. Please try again later.');
-        setLoading(false);
-      }
-    };
+    useEffect(() => {
+        dispatch(fetchPets());
+    }, [dispatch]);
 
-    fetchPets();
-  }, []);
+    // Ensure pets is an array before mapping over it
+    const petItems = pets && pets.map((pet) => (
+        <div key={pet.id}>
+            <h3>{pet.name}</h3>
+            {/* Display other pet details as needed */}
+        </div>
+    ));
 
-  const handleDeletePet = async (petId) => {
-    try {
-      await axios.delete(`https://suriyaadption.onrender.com/api/pet/${petId}`);
-      setPets(pets.filter((pet) => pet._id !== petId));
-    } catch (error) {
-      console.error('Error deleting pet:', error);
-      setError('Error deleting pet. Please try again later.');
-    }
-  };
-
-  if (loading) {
-    return <div className="container text-center">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="container text-center">Error: {error}</div>;
-  }
-
-  return (
-    <div className="container">
-      <h2 className="my-4">Admin Dashboard</h2>
-      <div className="row">
-        {pets.map((pet) => (
-          <div key={pet._id} className="col-lg-4 col-md-6 mb-4">
-            <div className="card h-100 shopping-card">
-              <img src={pet.photo} className="card-img-top pet-image" alt={pet.name} />
-              <div className="card-body">
-                <h3 className="card-title">{pet.name}</h3>
-                <p className="card-text"><strong>Breed:</strong> {pet.breed}</p>
-                <p className="card-text"><strong>Age:</strong> {pet.age}</p>
-                <button onClick={() => handleDeletePet(pet._id)} className="btn btn-danger">Delete</button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+    return (
+        <div>
+            <h2>Admin Dashboard</h2>
+            {petItems}
+        </div>
+    );
 };
 
 export default AdminDashboard;

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const PetProfile = () => {
     const { petId } = useParams();
     const [pet, setPet] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPet = async () => {
@@ -31,7 +33,13 @@ const PetProfile = () => {
         fetchPet();
     }, [petId]);
 
-    
+    const handleAdoption = () => {
+        setSuccess(true);
+        setTimeout(() => {
+            setSuccess(false);
+            navigate('/userdashboard');
+        }, 3000); // hide success message after 3 seconds
+    };
 
     if (loading) {
         return <div>Loading...</div>;
@@ -54,8 +62,8 @@ const PetProfile = () => {
                 <p><strong>Breed:</strong> {pet.breed}</p>
                 <p><strong>Age:</strong> {pet.age}</p>
                 <p><strong>Description:</strong> {pet.description}</p>
-                 
-                {/* Other details */}
+                <button className="btn btn-success" onClick={handleAdoption}>Adopt</button>
+                {success && <div className="alert alert-success mt-3">Adoption successful!</div>}
             </div>
         </div>
     );

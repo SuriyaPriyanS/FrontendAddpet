@@ -1,22 +1,23 @@
-import React from 'react';
-import { Nav, Navbar, Container, Row, Col, Card, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchPets, fetchAdoptions } from '../redux/Slice/petSlice';
+import { Container, Row, Col, Card, Navbar, Nav } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { selectLoggedInUser, logout } from '../redux/Slice/userSlice';
+import { selectPets, fetchPets } from '../redux/Slice/petSlice';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const { pets, loading: petsLoading, error: petsError } = useSelector((state) => state.pets);
-  const { adoptions, loading: adoptionsLoading, error: adoptionsError } = useSelector(
-    (state) => state.adoptions
-  );
+  const loggedInUser = useSelector(selectLoggedInUser);
+  const pets = useSelector(selectPets);
 
-  const handleFetchPets = () => {
-    dispatch(fetchPets());
-  };
+  useEffect(() => {
+    if (loggedInUser) {
+      dispatch(fetchPets());
+    }
+  }, [dispatch, loggedInUser]);
 
-  const handleFetchAdoptions = () => {
-    dispatch(fetchAdoptions());
+  const handleLogout = () => {
+    dispatch(logout());
   };
 
   return (
@@ -26,57 +27,53 @@ const Dashboard = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link as={Link} to="/" onClick={handleFetchPets}>
+            <Nav.Link as={Link} to="/">
               Pet List
             </Nav.Link>
-            <Nav.Link as={Link} to="/adopt">
+            <Nav.Link as={Link} to="/pet">
               Add Pet
             </Nav.Link>
-            <Nav.Link as={Link} to="/adoptions" onClick={handleFetchAdoptions}>
+            <Nav.Link as={Link} to="/adoptions">
               Adoptions
             </Nav.Link>
           </Nav>
+          {loggedInUser ? (
+            <Nav>
+              <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+            </Nav>
+          ) : (
+            <Nav>
+              <Nav.Link as={Link} to="/login">
+                Login
+              </Nav.Link>
+            </Nav>
+          )}
         </Navbar.Collapse>
       </Navbar>
 
-      <Row className="mt-3">
-        <Col>
-          <Card>
-            <Card.Body>
-              <Card.Title>Pets</Card.Title>
-              {petsLoading && <p>Loading...</p>}
-              {petsError && <p>Error: {petsError}</p>}
-              {pets && (
+      {loggedInUser ? (
+        <Row className="mt-3">
+          <Col>
+            <Card>
+              <Card.Body>
+                <Card.Title>Pets</Card.Title>
                 <ul>
                   {pets.map((pet) => (
-                    <li key={pet._id}>
+                    <li key={pet.id}>
                       {pet.name} - {pet.status}
                     </li>
                   ))}
                 </ul>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col>
-          <Card>
-            <Card.Body>
-              <Card.Title>Adoptions</Card.Title>
-              {adoptionsLoading && <p>Loading...</p>}
-              {adoptionsError && <p>Error: {adoptionsError}</p>}
-              {adoptions && (
-                <ul>
-                  {adoptions.map((adoption) => (
-                    <li key={adoption._id}>
-                      {adoption.pet.name} - {adoption.user.email}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      ) : (
+        <div>
+          <h3>Please log in to access the dashboard.</h3>
+          <Link to="/login">Login</Link>
+        </div>
+      )}
     </Container>
   );
 };

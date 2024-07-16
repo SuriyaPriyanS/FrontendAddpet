@@ -222,4 +222,9 @@ const petSlice = createSlice({
   },
 });
 
+
+export const selectPets = (state) => state.pets.pets;
+
+
+
 export default petSlice.reducer;

@@ -28,6 +28,7 @@ const App = () => {
           <Route path="/adopt" element={<AdoptionForm />} />
           <Route path="/profile/:petId" element={<PetProfile />} />
           <Route path="/userdashboard" element={<Dashboard />} />
+          <Route path="/admindashboard" element={<AdminDashboard />} />
          
           
          
