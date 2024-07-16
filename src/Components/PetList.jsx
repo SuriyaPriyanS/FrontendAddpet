@@ -178,7 +178,7 @@ const PetList = () => {
                                     <button onClick={() => handleViewDetails(pet._id)} className="btn btn-primary">
                                         <BsFillEyeFill className="mr-1" /> View Details
                                     </button>
-                                    <button onClick={() => handleAdoptClick(pet._id)} className="btn btn-success">
+                                    <button onClick={() => handleAdoptClick(pet._id)} className="btn btn-success m-3">
                                         Adopt
                                     </button>
                                 </div>
