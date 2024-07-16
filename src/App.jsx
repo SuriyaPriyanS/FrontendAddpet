@@ -12,6 +12,7 @@ import RegisterForm from './Components/RegisterFrom'; // Assuming the correct na
 import Homepages from './Components/Homepages';
 import Dashboard from './Components/Dashboard';
 import AdminDashboard from './Components/AdminDashboard';
+import AdoptionForm from './Components/AdoptionFrom';
 
 const App = () => {
   return (
@@ -24,9 +25,10 @@ const App = () => {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/feed" element={<FeedbackForm />} />
-          {/* <Route path="/adopt" element={<AdoptionForm />} /> */}
+          <Route path="/adopt" element={<AdoptionForm />} />
           <Route path="/profile/:petId" element={<PetProfile />} />
           <Route path="/userdashboard" element={<Dashboard />} />
+         
           
          
          

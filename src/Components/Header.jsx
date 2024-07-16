@@ -34,8 +34,8 @@ const Header = ({ children }) => {
     <nav className={`navbar navbar-expand-lg navbar-light ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}>
       <div className="container">
         <Link to="/" className="navbar-brand">
-          <img src="path/to/logo.png" alt="FourPaws Logo" className="w-8 h-8 rounded-full mr-2" />
-          <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">FourPaws</span>
+          <img src="path/to/logo.png" alt="MYpetShop" className="w-8 h-8 rounded-full mr-2" />
+          <span className="text-lg font-semibold text-gray-800 dark:text-gray-200 m-2">FourPaws</span>
         </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
@@ -49,7 +49,7 @@ const Header = ({ children }) => {
               <Link to="/pet" className="nav-link">Pet</Link>
             </li>
             <li className="nav-item">
-              <Link to="/create-donation" className="nav-link">Donation Campaigns</Link>
+              <Link to="/" className="nav-link">Donation Campaigns</Link>
             </li>
           </ul>
         </div>
