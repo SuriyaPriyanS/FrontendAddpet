@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import axios from 'axios';
 import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,45 +9,38 @@ import OAuth from './OAuth';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 const RegisterForm = () => {
-    const [formData, setFormData] = useState({
+    const navigate = useNavigate();
+
+    const initialValues = {
         name: '',
         email: '',
         password: '',
-    });
-    const [loading, setLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(null);
-    const navigate = useNavigate();
-
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value.trim() });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!formData.name || !formData.email || !formData.password) {
-            setErrorMessage("Please fill out all fields.");
-            return;
-        }
+    const validationSchema = Yup.object().shape({
+        name: Yup.string().required('Name is required'),
+        email: Yup.string().email('Invalid email').required('Email is required'),
+        password: Yup.string().required('Password is required'),
+    });
+
+    const handleSubmit = async (values, { setSubmitting, setErrors }) => {
         try {
-            setLoading(true);
-            setErrorMessage(null);
-            //const API_BASE_URL = 'https://suriyaadption.onrender.com/'; // Replace with your API endpoint URL
-            const response = await axios.post('https://suriyaadption.onrender.com/api/register', formData, {
+            const response = await axios.post('https://suriyaadption.onrender.com/api/register', values, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             const data = response.data;
             if (data.success === false) {
-                setErrorMessage(data.message);
+                setErrors({ errorMessage: data.message });
             } else {
                 navigate('/login');
             }
         } catch (error) {
-            setErrorMessage(error.response?.data?.message || error.message);
-            console.log('Registration failed:', error);
+            setErrors({ errorMessage: error.response?.data?.message || error.message });
+            console.error('Registration failed:', error);
         } finally {
-            setLoading(false);
+            setSubmitting(false);
         }
     };
 
@@ -56,72 +51,71 @@ const RegisterForm = () => {
                     <div className="card">
                         <div className="card-body">
                             <h2 className="text-center mb-4">Register Form</h2>
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-3">
-                                    <label htmlFor="formName" className="form-label">
-                                        <FaUser className="me-2" /> Name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        placeholder="Enter your name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        required
-                                        className="form-control"
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="formEmail" className="form-label">
-                                        <FaEnvelope className="me-2" /> Email address
-                                    </label>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        placeholder="Enter your email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        required
-                                        className="form-control"
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="formPassword" className="form-label">
-                                        <FaLock className="me-2" /> Password
-                                    </label>
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        placeholder="Enter your password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        required
-                                        className="form-control"
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="btn btn-primary w-100"
-                                >
-                                    {loading ? (
-                                        <Spinner size="sm" role="status" aria-hidden="true" />
-                                    ) : (
-                                        'Sign Up'
-                                    )}
-                                </button>
-                                <OAuth />
-                            </form>
+                            <Formik
+                                initialValues={initialValues}
+                                validationSchema={validationSchema}
+                                onSubmit={handleSubmit}
+                            >
+                                {({ isSubmitting }) => (
+                                    <Form>
+                                        <div className="mb-3">
+                                            <label htmlFor="name" className="form-label">
+                                                <FaUser className="me-2" /> Name
+                                            </label>
+                                            <Field
+                                                type="text"
+                                                id="name"
+                                                name="name"
+                                                placeholder="Enter your name"
+                                                className="form-control"
+                                            />
+                                            <ErrorMessage name="name" component="div" className="text-danger" />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="email" className="form-label">
+                                                <FaEnvelope className="me-2" /> Email address
+                                            </label>
+                                            <Field
+                                                type="email"
+                                                id="email"
+                                                name="email"
+                                                placeholder="Enter your email"
+                                                className="form-control"
+                                            />
+                                            <ErrorMessage name="email" component="div" className="text-danger" />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="password" className="form-label">
+                                                <FaLock className="me-2" /> Password
+                                            </label>
+                                            <Field
+                                                type="password"
+                                                id="password"
+                                                name="password"
+                                                placeholder="Enter your password"
+                                                className="form-control"
+                                            />
+                                            <ErrorMessage name="password" component="div" className="text-danger" />
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            disabled={isSubmitting}
+                                            className="btn btn-primary w-100"
+                                        >
+                                            {isSubmitting ? (
+                                                <Spinner size="sm" role="status" aria-hidden="true" />
+                                            ) : (
+                                                'Sign Up'
+                                            )}
+                                        </button>
+                                        <OAuth />
+                                    </Form>
+                                )}
+                            </Formik>
                             <div className="d-flex justify-content-center mt-4">
                                 <span>Already have an account? </span>
                                 <Link to="/login" className="ms-1">Sign In</Link>
-                                
                             </div>
-                            {errorMessage && (
-                                <Alert color="danger" className="mt-4">
-                                    <span className="font-weight-bold">🥴 OOPS! </span>{errorMessage}
-                                </Alert>
-                            )}
                         </div>
                     </div>
                 </div>
