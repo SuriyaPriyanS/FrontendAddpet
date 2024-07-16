@@ -19,8 +19,8 @@ const OAuth = () => {
 
         try {
             const result = await signInWithPopup(auth, provider);
-            const API_BASE_URL = 'https://backend-11-9tn7.onrender.com/';
-            const response = await axios.post('${API_BASE_URL}api/google', {
+            //const API_BASE_URL = 'https://suriyaadption.onrender.com/';
+            const response = await axios.post('https://suriyaadption.onrender.com/api/google', {
                 name: result.user.displayName,
                 email: result.user.email,
                 profilePict: result.user.photoURL,

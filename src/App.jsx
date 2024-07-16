@@ -11,14 +11,7 @@ import RegisterForm from './Components/RegisterFrom'; // Assuming the correct na
 
 import Homepages from './Components/Homepages';
 import Dashboard from './Components/Dashboard';
-import CreateDonationCampaign from './Pages/UserDashboard/createDonationcamponsation/creatDonation';
-import CheckoutForm from './Pages/UserDashboard/Payment/checkoutfrom';
-import MyAddedPets from './Pages/UserDashboard/myaddedpet/myaddedPets';
-
-import AdaptationPage from './Components/Adoption/AdpationPages';
-import ApplicationForm from './Pages/ApplicationEmail.jsx/Application';
-//import AdminDashboard from './Components/AdminDashboard';
-
+import AdminDashboard from './Components/AdminDashboard';
 
 const App = () => {
   return (
@@ -32,14 +25,14 @@ const App = () => {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/feed" element={<FeedbackForm />} />
           {/* <Route path="/adopt" element={<AdoptionForm />} /> */}
-          <Route path="/profile" element={<PetProfile />} />
+          <Route path="/profile/:petId" element={<PetProfile />} />
           <Route path="/userdashboard" element={<Dashboard />} />
-          <Route path="/create-donation" element={<CreateDonationCampaign />} />
-          <Route path = "/payment" element={<CheckoutForm/>}/>
-          <Route path="/MyaddedPets" element ={<MyAddedPets/>}/>
-          <Route path= "/AdaptationPage" element={<AdaptationPage/>}/>
-          {/* <Route path='/admin' element={<AdminDashboard/>}/> */}
-          <Route path='/apply' element={<ApplicationForm/>}/>
+          
+         
+         
+         
+          
+         
          
          
          

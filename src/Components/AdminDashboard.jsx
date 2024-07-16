@@ -1,93 +1,63 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchPets, deletePet, addPet, updatePet, clearError } from '../redux/Slice/petSlice';
+// AdminDashboard.jsx
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const AdminDashboard = () => {
-  const dispatch = useDispatch();
-  const { pets, loading, error } = useSelector((state) => state.pets);
-
-  const [newPet, setNewPet] = useState({ name: '', species: '' });
-  const [updatePetData, setUpdatePetData] = useState({ id: '', name: '', species: '' });
+  const [pets, setPets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchPets());
-  }, [dispatch]);
+    const fetchPets = async () => {
+      try {
+        const response = await axios.get('https://suriyaadption.onrender.com/api/getpetall');
+        setPets(response.data);
+        setLoading(false);
+      } catch (error) {
+        setError('Error fetching pets. Please try again later.');
+        setLoading(false);
+      }
+    };
 
-  const handleDelete = (petId) => {
-    dispatch(deletePet(petId));
+    fetchPets();
+  }, []);
+
+  const handleDeletePet = async (petId) => {
+    try {
+      await axios.delete(`https://suriyaadption.onrender.com/api/pet/${petId}`);
+      setPets(pets.filter((pet) => pet._id !== petId));
+    } catch (error) {
+      console.error('Error deleting pet:', error);
+      setError('Error deleting pet. Please try again later.');
+    }
   };
 
-  const handleAdd = (e) => {
-    e.preventDefault();
-    dispatch(addPet(newPet));
-    setNewPet({ name: '', species: '' });
-  };
+  if (loading) {
+    return <div className="container text-center">Loading...</div>;
+  }
 
-  const handleUpdate = (e) => {
-    e.preventDefault();
-    dispatch(updatePet(updatePetData));
-    setUpdatePetData({ id: '', name: '', species: '' });
-  };
-
-  const handleClearError = () => {
-    dispatch(clearError());
-  };
+  if (error) {
+    return <div className="container text-center">Error: {error}</div>;
+  }
 
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
-      {loading && <p>Loading...</p>}
-      {error && (
-        <div>
-          <p>Error: {error}</p>
-          <button onClick={handleClearError}>Clear Error</button>
-        </div>
-      )}
-      <ul>
+    <div className="container">
+      <h2 className="my-4">Admin Dashboard</h2>
+      <div className="row">
         {pets.map((pet) => (
-          <li key={pet.id}>
-            {pet.name} ({pet.species})
-            <button onClick={() => handleDelete(pet.id)}>Delete</button>
-            <button onClick={() => setUpdatePetData({ id: pet.id, name: pet.name, species: pet.species })}>
-              Update
-            </button>
-          </li>
+          <div key={pet._id} className="col-lg-4 col-md-6 mb-4">
+            <div className="card h-100 shopping-card">
+              <img src={pet.photo} className="card-img-top pet-image" alt={pet.name} />
+              <div className="card-body">
+                <h3 className="card-title">{pet.name}</h3>
+                <p className="card-text"><strong>Breed:</strong> {pet.breed}</p>
+                <p className="card-text"><strong>Age:</strong> {pet.age}</p>
+                <button onClick={() => handleDeletePet(pet._id)} className="btn btn-danger">Delete</button>
+              </div>
+            </div>
+          </div>
         ))}
-      </ul>
-      <form onSubmit={handleAdd}>
-        <h2>Add New Pet</h2>
-        <input
-          type="text"
-          placeholder="Name"
-          value={newPet.name}
-          onChange={(e) => setNewPet({ ...newPet, name: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Species"
-          value={newPet.species}
-          onChange={(e) => setNewPet({ ...newPet, species: e.target.value })}
-        />
-        <button type="submit">Add Pet</button>
-      </form>
-      {updatePetData.id && (
-        <form onSubmit={handleUpdate}>
-          <h2>Update Pet</h2>
-          <input
-            type="text"
-            placeholder="Name"
-            value={updatePetData.name}
-            onChange={(e) => setUpdatePetData({ ...updatePetData, name: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Species"
-            value={updatePetData.species}
-            onChange={(e) => setUpdatePetData({ ...updatePetData, species: e.target.value })}
-          />
-          <button type="submit">Update Pet</button>
-        </form>
-      )}
+      </div>
     </div>
   );
 };

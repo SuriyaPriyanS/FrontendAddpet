@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { BsFillEyeFill } from 'react-icons/bs';
-
 import { Dropdown, DropdownButton } from 'react-bootstrap';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const PetList = () => {
     const [pets, setPets] = useState([]);
@@ -17,7 +17,7 @@ const PetList = () => {
     useEffect(() => {
         const fetchPets = async () => {
             try {
-                const response = await axios.get(`https://backend-11-9tn7.onrender.com/api/api/pet`);
+                const response = await axios.get('https://suriyaadption.onrender.com/api/getpetall');
 
                 if (Array.isArray(response.data.data)) {
                     setPets(response.data.data);
@@ -35,10 +35,6 @@ const PetList = () => {
         fetchPets();
     }, []);
 
-    const handleViewDetails = (petId) => {
-        navigate(`/profile`);
-    };
-
     const handleEdit = async (petId) => {
         try {
             const authToken = localStorage.getItem('authToken');
@@ -47,8 +43,8 @@ const PetList = () => {
                 return;
             }
 
-            const response = await axios.put(
-                `https://backend-11-9tn7.onrender.com/api/pet/${petId}`,
+            await axios.put(
+                `https://suriyaadption.onrender.com/api/pet/${petId}`,
                 { /* Updated pet data */ },
                 {
                     headers: {
@@ -64,7 +60,7 @@ const PetList = () => {
         }
     };
 
-    const handleAdoption = async (petId) => {
+    const handleAdoptClick = async (petId) => {
         try {
             const authToken = localStorage.getItem('authToken');
             if (!authToken) {
@@ -73,8 +69,8 @@ const PetList = () => {
             }
 
             const response = await axios.post(
-                `https://backend-11-9tn7.onrender.com/api/api/pet`, // Assuming your API endpoint for adoption
-                {},
+                `https://suriyaadption.onrender.com/api/adoptionPosts`,
+                { petId: petId },
                 {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -82,15 +78,19 @@ const PetList = () => {
                 }
             );
 
-            // Update the pet status locally
-            setPets(pets.map(pet => pet._id === petId ? { ...pet, status: 'adopted' } : pet));
-
-            // Show success message
-            toast.success('Pet adopted successfully.');
+            if (response.status === 200) {
+                toast.success('Adoption request submitted successfully.');
+            } else {
+                toast.error('Failed to submit adoption request. Please try again.');
+            }
         } catch (error) {
-            console.error('Error adopting pet:', error);
-            toast.error('Failed to adopt pet. Please try again.');
+            console.error('Error during adoption request:', error);
+            toast.error('Failed to submit adoption request. Please try again.');
         }
+    };
+
+    const handleViewDetails = (petId) => {
+        navigate(`/profile/${petId}`);
     };
 
     const handleExportJSON = () => {
@@ -131,17 +131,6 @@ const PetList = () => {
             return pet.name.toLowerCase().includes(searchTerm);
         }
     });
-
-    useEffect(() => {
-        console.log('Filtered Pets:', filteredPets);
-    }, [filter, pets, searchTerm]);
-
-    useEffect(() => {
-        // Example scenario where adoption is triggered automatically
-        if (filteredPets.length > 0) {
-            handleAdoption(filteredPets[0]._id); // Automatically adopt the first filtered pet
-        }
-    }, [filteredPets]);
 
     if (loading) {
         return <div className="container text-center">Loading...</div>;
@@ -189,8 +178,7 @@ const PetList = () => {
                                     <button onClick={() => handleViewDetails(pet._id)} className="btn btn-primary">
                                         <BsFillEyeFill className="mr-1" /> View Details
                                     </button>
-                                    
-                                    <button onClick={() => handleAdoption(pet._id)} className="btn btn-success ml-2 ms-2">
+                                    <button onClick={() => handleAdoptClick(pet._id)} className="btn btn-success">
                                         Adopt
                                     </button>
                                 </div>
@@ -201,6 +189,7 @@ const PetList = () => {
                     <p className="col">No pets found.</p>
                 )}
             </div>
+            <ToastContainer />
         </div>
     );
 };

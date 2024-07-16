@@ -1,62 +1,59 @@
-import React from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as yup from 'yup';
+import React, { useState } from 'react';
+import axios from 'axios';
 
 const FeedbackForm = () => {
-    const initialValues = {
-        name: '',
-        email: '',
-        message: ''
-    };
+  const [feedback, setFeedback] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
 
-    const validationSchema = yup.object().shape({
-        name: yup.string().required('Name is required'),
-        email: yup.string().email('Invalid email address').required('Email is required'),
-        message: yup.string().required('Message is required')
-    });
+  const handleSubmitFeedback = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    try {
+      const response = await axios.post('http://localhost:5000/api/feedback', {
+        message: feedback
+      });
+      if (response.data.success) {
+        setSubmitted(true);
+        console.log('Feedback submitted successfully.');
+      } else {
+        setError('Failed to submit feedback. Please try again.');
+      }
+    } catch (error) {
+      setError('Error submitting feedback. Please try again later.');
+      console.error('Error submitting feedback:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleSubmit = (values, { setSubmitting, resetForm }) => {
-        // Simulate sending the feedback data to a server
-        setTimeout(() => {
-            console.log(values);
-            alert(JSON.stringify(values, null, 2));
-            resetForm();
-            setSubmitting(false);
-        }, 400);
-    };
-
-    return (
-        <div>
-            <h2>Feedback Form</h2>
-            <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-            >
-                <Form>
-                    <div className="form-group">
-                        <label htmlFor="name">Name</label>
-                        <Field type="text" id="name" name="name" className="form-control" />
-                        <ErrorMessage name="name" component="div" className="error-message" />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="email">Email</label>
-                        <Field type="email" id="email" name="email" className="form-control" />
-                        <ErrorMessage name="email" component="div" className="error-message" />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="message">Message</label>
-                        <Field as="textarea" id="message" name="message" className="form-control" />
-                        <ErrorMessage name="message" component="div" className="error-message" />
-                    </div>
-
-                    <button type="submit" className="btn btn-primary">Submit</button>
-                </Form>
-            </Formik>
-        </div>
-    );
+  return (
+    <div className="container">
+      <h2>Feedback Form</h2>
+      {submitted ? (
+        <p>Thank you for your feedback!</p>
+      ) : (
+        <form onSubmit={handleSubmitFeedback}>
+          <div className="form-group">
+            <label htmlFor="feedbackMessage">Feedback Message</label>
+            <textarea
+              className="form-control"
+              id="feedbackMessage"
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              required
+            ></textarea>
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Submit Feedback
+          </button>
+        </form>
+      )}
+      {loading && <p>Loading...</p>}
+      {error && <p>Error: {error}</p>}
+    </div>
+  );
 };
 
 export default FeedbackForm;

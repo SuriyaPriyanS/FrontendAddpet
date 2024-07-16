@@ -1,128 +1,84 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { Nav, Navbar, Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { NavLink } from 'react-router-dom';
-import { MdArrowDropDown } from 'react-icons/md';
-import axios from 'axios';
-import './Dashboard.css';
-import Navbar from '../Components/Header'; // Ensure correct path to Navbar
-import { selectCurrentUser, logout } from '../redux/Slice/userSlice';
+import { fetchPets, fetchAdoptions } from '../redux/Slice/petSlice';
 
 const Dashboard = () => {
-    const dispatch = useDispatch();
-    const currentUser = useSelector(selectCurrentUser);
-    const [isAdmin, setIsAdmin] = useState(false);
+  const dispatch = useDispatch();
+  const { pets, loading: petsLoading, error: petsError } = useSelector((state) => state.pets);
+  const { adoptions, loading: adoptionsLoading, error: adoptionsError } = useSelector(
+    (state) => state.adoptions
+  );
 
-    useEffect(() => {
-        // Fetch user data and check admin status
-        axios.get('https://backend-10-840q.onrender.com/', {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-            },
-        })
-        .then(response => {
-            setIsAdmin(response.data.role === 'Admin');
-        })
-        .catch(error => {
-            console.error('Error fetching user profile:', error);
-        });
-    }, []);
+  const handleFetchPets = () => {
+    dispatch(fetchPets());
+  };
 
-    const handleLogout = () => {
-        dispatch(logout());
-    };
+  const handleFetchAdoptions = () => {
+    dispatch(fetchAdoptions());
+  };
 
-    const navLinks = (
-        <>
-            {/* Admin links */}
-            {isAdmin && (
-                <>
-                    <li className="mb-2">
-                        <NavLink
-                            to="/allusers"
-                            className="text-yellow-500 text-lg font-bold underline hover:text-red-600"
-                        >
-                            All Users
-                        </NavLink>
+  return (
+    <Container fluid>
+      <Navbar bg="light" expand="lg">
+        <Navbar.Brand href="#home">Pet Adoption Dashboard</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto">
+            <Nav.Link as={Link} to="/" onClick={handleFetchPets}>
+              Pet List
+            </Nav.Link>
+            <Nav.Link as={Link} to="/adopt">
+              Add Pet
+            </Nav.Link>
+            <Nav.Link as={Link} to="/adoptions" onClick={handleFetchAdoptions}>
+              Adoptions
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+
+      <Row className="mt-3">
+        <Col>
+          <Card>
+            <Card.Body>
+              <Card.Title>Pets</Card.Title>
+              {petsLoading && <p>Loading...</p>}
+              {petsError && <p>Error: {petsError}</p>}
+              {pets && (
+                <ul>
+                  {pets.map((pet) => (
+                    <li key={pet._id}>
+                      {pet.name} - {pet.status}
                     </li>
-                    <li className="mb-2">
-                        <NavLink
-                            to="/allpetsadmin"
-                            className="text-yellow-500 text-lg font-bold underline hover:text-red-600"
-                        >
-                            All Pets
-                        </NavLink>
+                  ))}
+                </ul>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col>
+          <Card>
+            <Card.Body>
+              <Card.Title>Adoptions</Card.Title>
+              {adoptionsLoading && <p>Loading...</p>}
+              {adoptionsError && <p>Error: {adoptionsError}</p>}
+              {adoptions && (
+                <ul>
+                  {adoptions.map((adoption) => (
+                    <li key={adoption._id}>
+                      {adoption.pet.name} - {adoption.user.email}
                     </li>
-                    <li className="mb-2">
-                        <NavLink
-                            to="/alldonationcampadmin"
-                            className="text-yellow-500 text-lg font-bold underline hover:text-red-600"
-                        >
-                            All Donation Campaigns
-                        </NavLink>
-                    </li>
-                    <div className="border-t border-gray-300 my-4"></div>
-                </>
-            )}
-            {/* User links */}
-            <li className="mb-2">
-                <NavLink
-                    to="/MyaddedPets"
-                    className="text-yellow-500 text-lg font-bold underline hover:text-red-600"
-                >
-                    My Added Pets
-                </NavLink>
-                <br/>
-                <NavLink
-                    to="/AdaptationPage"
-                    className="text-yellow-500 text-lg font-bold underline hover:text-red-600"
-                >
-                    Add a Pet
-                </NavLink>
-                <br/>
-                <NavLink
-                    to="/pet"
-                    className="text-yellow-500 text-lg font-bold underline hover:text-red-600"
-                >
-                    Pet
-                </NavLink>
-                <br/>
-            </li>
-            <div className="border-t border-gray-300 my-4"></div>
-            {/* Home link */}
-            <li className="pt-4">
-                <NavLink
-                    to="/"
-                    className="text-yellow-500 text-lg font-bold underline hover:text-red-600"
-                >
-                    Home
-                </NavLink>
-            </li>
-        </>
-    );
-
-    return (
-        <div className="col-lg-9 bg-light min-vh-100">
-            <div className="dropdown position-absolute mt-10">
-                <button className="btn btn-outline-secondary dropdown-toggle d-lg-none" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <MdArrowDropDown />
-                </button>
-                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <ul>{navLinks}</ul>
-                </div>
-            </div>
-            <div className="dashboard-header">
-                <p>User Dashboard</p>
-            </div>
-            <p className="dashboard-welcome">
-                Welcome {currentUser ? currentUser.displayName : 'to Your Dashboard'}
-            </p>
-            {currentUser && (
-                <button onClick={handleLogout} className="logout-button">
-                    Logout
-                </button>
-            )}
-        </div>
-    );
+                  ))}
+                </ul>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
 };
 
 export default Dashboard;

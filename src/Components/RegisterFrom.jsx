@@ -29,7 +29,7 @@ const RegisterForm = () => {
         try {
             setLoading(true);
             setErrorMessage(null);
-            const API_BASE_URL = 'https://backend-11-9tn7.onrender.com/';
+            const API_BASE_URL = 'https://suriyaadption.onrender.com/'; // Replace with your API endpoint URL
             const response = await axios.post('${API_BASE_URL}api/register', formData, {
                 headers: {
                     'Content-Type': 'application/json'
